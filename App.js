@@ -10,14 +10,13 @@ import IconButton from "./component/iconButton";
 import EmojiPicker from "./component/emojiPicker";
 import EmojiSticker from "./component/emojiSticker";
 import EmojiList from "./component/emojiList";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickedEmoji, setPickedEmoji] = useState(null);
-
-  console.log(pickedEmoji);
 
   const handlePickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -53,52 +52,54 @@ export default function App() {
     // we will implement this later
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <ImageViewer
-          PlaceholderImage={PlaceholderImage}
-          selectedImage={selectedImage}
-        />
-        {pickedEmoji && (
-          <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
-        )}
-      </View>
+    <GestureHandlerRootView style={styles.container}>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <ImageViewer
+            PlaceholderImage={PlaceholderImage}
+            selectedImage={selectedImage}
+          />
+          {pickedEmoji && (
+            <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
+          )}
+        </View>
 
-      {/* toggle between options container and choose image button selectors */}
-      {showAppOptions ? (
-        <View style={styles.optionsContainer}>
-          <View style={styles.optionsRow}>
-            <IconButton icon={"refresh"} label={"reset"} onPress={onReset} />
-            <CircleButton onPress={onAddSticker} />
-            <IconButton
-              icon={"save-alt"}
-              label={"save"}
-              onPress={onSaveImageAsync}
+        {/* toggle between options container and choose image button selectors */}
+        {showAppOptions ? (
+          <View style={styles.optionsContainer}>
+            <View style={styles.optionsRow}>
+              <IconButton icon={"refresh"} label={"reset"} onPress={onReset} />
+              <CircleButton onPress={onAddSticker} />
+              <IconButton
+                icon={"save-alt"}
+                label={"save"}
+                onPress={onSaveImageAsync}
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.footerContainer}>
+            <ButtonComponent
+              label={`Choose a photo`}
+              theme={"primary"}
+              onPress={handlePickImage}
+            />
+            <ButtonComponent
+              label={`use this photo`}
+              onPress={() => {
+                setShowAppOptions(true);
+              }}
             />
           </View>
-        </View>
-      ) : (
-        <View style={styles.footerContainer}>
-          <ButtonComponent
-            label={`Choose a photo`}
-            theme={"primary"}
-            onPress={handlePickImage}
-          />
-          <ButtonComponent
-            label={`use this photo`}
-            onPress={() => {
-              setShowAppOptions(true);
-            }}
-          />
-        </View>
-      )}
+        )}
 
-      <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
-        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
-      </EmojiPicker>
+        <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
+          <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+        </EmojiPicker>
 
-      <StatusBar style="inverted" />
-    </View>
+        <StatusBar style="inverted" />
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
